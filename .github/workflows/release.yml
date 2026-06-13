@@ -18,6 +18,9 @@ jobs:
           - os: windows-latest
             artifact_name: PdfCut-Windows
             asset_name: PdfCut-Windows.zip
+          - os: ubuntu-22.04
+            artifact_name: PdfCut-Linux
+            asset_name: PdfCut-Linux.tar.gz
 
     permissions:
       contents: write
@@ -29,8 +32,14 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.11.0'
+          version: '6.8.3'
           modules: 'qtpdf'
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libqpdf-dev libgl1-mesa-dev
 
       - name: Install qpdf (macOS)
         if: matrix.os == 'macos-latest'
@@ -68,6 +77,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: Compress-Archive -Path "build\Release\*" -DestinationPath "${{ matrix.asset_name }}"
+
+      - name: Archive application (Linux)
+        if: matrix.os == 'ubuntu-22.04'
+        run: tar -czvf ${{ matrix.asset_name }} -C build PdfCut
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
