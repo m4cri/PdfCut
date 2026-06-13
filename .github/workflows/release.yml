@@ -1,0 +1,78 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: PdfCut-macOS
+            asset_name: PdfCut-macOS.zip
+          - os: windows-latest
+            artifact_name: PdfCut-Windows
+            asset_name: PdfCut-Windows.zip
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.0'
+          modules: 'qtpdf'
+
+      - name: Install qpdf (macOS)
+        if: matrix.os == 'macos-latest'
+        run: brew install qpdf
+
+      - name: Install qpdf (Windows)
+        if: matrix.os == 'windows-latest'
+        run: vcpkg install qpdf:x64-windows
+
+      - name: Configure CMake
+        run: >
+          cmake -B build
+          -DCMAKE_BUILD_TYPE=Release
+          ${{ matrix.os == 'windows-latest' && format('-DCMAKE_TOOLCHAIN_FILE={0}/scripts/buildsystems/vcpkg.cmake', env.VCPKG_INSTALLATION_ROOT) || '' }}
+
+      - name: Build Project
+        run: cmake --build build --config Release
+
+      - name: Deploy Qt Dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: macdeployqt build/PdfCut.app
+
+      - name: Deploy Qt Dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          # windeployqt pulls all required Qt .dll files into the executable folder
+          windeployqt build/Release/PdfCut.exe
+
+      - name: Archive application (macOS)
+        if: matrix.os == 'macos-latest'
+        run: ditto -c -k --sequesterRsrc --keepParent build/PdfCut.app ${{ matrix.asset_name }}
+
+      - name: Archive application (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: Compress-Archive -Path "build\Release\*" -DestinationPath "${{ matrix.asset_name }}"
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset_name }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
