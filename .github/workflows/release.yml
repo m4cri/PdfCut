@@ -50,11 +50,14 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: vcpkg install qpdf:x64-windows
 
-      - name: Configure CMake
-        run: >
-          cmake -B build
-          -DCMAKE_BUILD_TYPE=Release
-          ${{ matrix.os == 'windows-latest' && format('-DCMAKE_TOOLCHAIN_FILE={0}/scripts/buildsystems/vcpkg.cmake', env.VCPKG_INSTALLATION_ROOT) || '' }}
+      - name: Configure CMake (macOS & Linux)
+        if: matrix.os != 'windows-latest'
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure CMake (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake"
 
       - name: Build Project
         run: cmake --build build --config Release
