@@ -10,9 +10,10 @@
 #include<memory>
 #include"listwidgethelper.h"
 
-#include<qpdf/QPDF.hh>
+#include <qpdf/QPDF.hh>
 #include <qpdf/QPDFPageDocumentHelper.hh>
 #include <qpdf/Buffer.hh>
+#include <qpdf/QPDFWriter.hh>
 
 class PdfContainer
 {
