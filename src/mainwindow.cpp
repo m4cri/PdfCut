@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QStandardPaths>
 #include <QDesktopServices>
+#include <QtGlobal>
+#include <qpdf/QPDF.hh>
 
 #define UPDATE_PAGECOUNTER ui->totalPages->setText(QString("%1 pages total").arg(pdfRend->getPagesCount()));
 
@@ -65,15 +67,15 @@ void MainWindow::quitActionHandler()
 void MainWindow::aboutProjectHandler()
 {
     QMessageBox::about(this,"About PdfCut",
-                       "<h2>PdfCut</h2>"
+                       QString("<h2>PdfCut</h2>"
                        "<h3>Version 1.0</h3>"
-                       "<h4>Qt version 6.11.0, qpdf version 12.4.0</h4>"
+                       "<h4>Qt version %1, qpdf version %2</h4>"
                        "<p style='min-width: 400px;'>A lightweight application for cutting, merging and extracting pages from PDF doucments.</p>"
                        "<p>Copyright (C) 2026 Somfai Marton</p>"
                        "<p>This program comes with ABSOLUTELY NO WARRANTY.<br>"
                        "This is free software, and you are welcome to redistribute it "
                        "under certain conditions. See the <a href='https://www.gnu.org/licenses/gpl-3.0.html'>GNU GPLv3 License</a> for details.</p>"
-                       "<p>Check out the project at <a href='https://github.com/m4rci/PdfCut'>GitHub</a>.</p>");
+                       "<p>Check out the project at <a href='https://github.com/m4cri/PdfCut'>GitHub</a>.</p>").arg(QT_VERSION_STR,QPDF_VERSION));
 }
 
 void MainWindow::documentationHandler()
