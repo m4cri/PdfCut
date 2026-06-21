@@ -5,7 +5,7 @@
 </div>
 
 # PdfCut
-*A lightweight application for cutting, merging and extracting pages from PDF doucments.*
+*A lightweight application for cutting, merging and extracting pages from PDF documents.*
 
 <div align="center">
 
@@ -15,7 +15,7 @@
 
 ## Installation
 
-You can either choose a precompiled binary for your system under **Releases**, or build the project yourself. Building instructions can be found below under the *Building and contribution* section.
+You can either choose a precompiled binary for your system under **Releases**, or build the project yourself. Building instructions can be found under the *Building and contribution* section.
 
 ## Usage
 
@@ -41,7 +41,7 @@ Their project pages can be found here:
 
 - [qpdf](https://github.com/qpdf/qpdf)
 
-## Building and contribution
+## Building and Contribution
 
 ### Prerequisites
 
