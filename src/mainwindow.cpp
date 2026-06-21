@@ -144,7 +144,9 @@ void MainWindow::deletePageHandler()
         ui->actionDelete_selected_page->setEnabled(false);
         ui->deleteToolButton->setEnabled(false);
         ui->saveButton->setEnabled(false);
+        ui->saveAsButton->setEnabled(false);
         ui->actionSave->setEnabled(false);
+        ui->actionSave_As->setEnabled(false);
     }
 }
 
